@@ -1,37 +1,82 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaGoogle } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Card from '../../components/card/Card';
 import styles from './auth.module.scss';
 import registerImg from '../../assets/register.png';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase/config';
+import Loader from '../../components/loader/Loader';
+
 const Register = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [cPassword, setCPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const register = (e) => {
+    e.preventDefault();
+    if (password !== cPassword) {
+      toast.error('Password doesnt match');
+      setIsLoading(false);
+    }
+    setIsLoading(true);
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+        console.log(user);
+        setIsLoading(false);
+        toast.success('Sucessfully registered');
+        navigate('/login');
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+        setIsLoading(false);
+        // ..
+      });
+  };
   return (
     <section className={`container ${styles.auth}`}>
+      <ToastContainer />
+      {isLoading && <Loader />}
       <Card>
         <div className={styles.form}>
           <h2 style={{ color: '#ff7722' }}>Register</h2>
 
-          <form>
-            <input type="email" placeholder="Enter your email" required />
-            <input type="password" placeholder="Enter your password" required />
+          <form onSubmit={register}>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Enter your password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
             <input
               type="password"
               placeholder="Confirm your password"
               required
+              value={cPassword}
+              onChange={(e) => setCPassword(e.target.value)}
             />
 
-            <button className="--btn --btn-primary --btn-block">
+            <button type="submit" className="--btn --btn-primary --btn-block">
               Register
             </button>
-            {/* <div className={styles.links}>
-              <Link to="/reset">Reset Password</Link>
-            </div> */}
-            {/* <p>-- or --</p> */}
           </form>
-          {/* <button className="--btn --btn-danger --btn-block">
-            <FaGoogle color="#fff" style={{ marginRight: 10 }} /> Register With
-            Google
-          </button> */}
 
           <span className={styles.register}>
             <p>

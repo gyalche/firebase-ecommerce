@@ -3,7 +3,7 @@ import styles from './Loader.module.scss';
 import loading from '../../assets/loader.gif';
 import ReactDOM from 'react-dom';
 
-const loader = () => {
+const Loader = () => {
   return ReactDOM.createPortal(
     <div className={styles.wrapper}>
       <div className={styles.loader}>
@@ -14,4 +14,4 @@ const loader = () => {
   );
 };
 
-export default loader;
+export default Loader;
