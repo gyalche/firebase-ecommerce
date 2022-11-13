@@ -1,6 +1,5 @@
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-
 import { Header, Footer } from './components/index';
 import { Home, Contact, Login, Register, Reset } from './pages/index';
 
