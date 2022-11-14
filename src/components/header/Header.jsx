@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
 import { FaShoppingCart, FaTimes } from 'react-icons/fa';
 import { HiOutlineMenuAlt3 } from 'react-icons/hi';
+import { signOut } from 'firebase/auth';
+import { auth } from '../../firebase/config';
+import { ToastContainer, toast } from 'react-toastify';
 
 const logo = (
   <div className={styles.logo}>
@@ -26,6 +29,7 @@ const cart = (
 
 const activeLink = ({ isActive }) => (isActive ? `${styles.active}` : ``);
 const Header = () => {
+  const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
 
   //show menu;
@@ -38,8 +42,21 @@ const Header = () => {
     setShowMenu(false);
   };
 
+  //user logout;
+  const logoutUser = (e) => {
+    e.preventDefault();
+    signOut(auth)
+      .then(() => {
+        toast.success('user signout successfully');
+        navigate('/login');
+      })
+      .catch((error) => {
+        toast.error(error);
+      });
+  };
   return (
     <header>
+      <ToastContainer />
       <div className={styles.header}>
         {logo}
         <nav>
@@ -84,6 +101,9 @@ const Header = () => {
               </NavLink>
               <NavLink to="/order-history" className={activeLink}>
                 My Orders
+              </NavLink>
+              <NavLink to="/order-history" onClick={logoutUser}>
+                Logout
               </NavLink>
             </span>
             {cart}
