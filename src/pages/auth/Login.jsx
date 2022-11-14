@@ -8,13 +8,15 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import { ToastContainer, toast } from 'react-toastify';
 import Loader from '../../components/loader/Loader';
-
+import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  //singin with email and password;
   const loginUser = (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -30,6 +32,21 @@ const Login = () => {
         const errorCode = error.code;
         const errorMessage = error.message;
         toast.error(errorMessage);
+      });
+  };
+
+  //signin with  google;
+  const provider = new GoogleAuthProvider();
+  const googleLogin = () => {
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        const user = result.user;
+        console.log(user);
+        toast.success('login successfull');
+        navigate('/');
+      })
+      .catch((error) => {
+        toast.error(error.message);
       });
   };
   return (
@@ -66,7 +83,9 @@ const Login = () => {
             </div>
             <p>-- or --</p>
           </form>
-          <button className="--btn --btn-danger --btn-block">
+          <button
+            onClick={googleLogin}
+            className="--btn --btn-danger --btn-block">
             <FaGoogle color="#fff" style={{ marginRight: 10 }} /> Login With
             Google
           </button>

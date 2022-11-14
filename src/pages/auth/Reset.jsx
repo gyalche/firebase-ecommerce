@@ -1,9 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './auth.module.scss';
 import restImg from '../../assets/forgot.png';
 import Card from '../../components/card/Card';
 import { Link } from 'react-router-dom';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../firebase/config';
+import { toast } from 'react-toastify';
 const Reset = () => {
+  const [email, setEmail] = useState('');
+
+  //reset password;
+  const resetPassword = (e) => {
+    e.preventDefault();
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        toast.success('check your email for a rest link');
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        toast.error(errorMessage);
+        // ..
+      });
+  };
   return (
     <section className={`container ${styles.auth}`}>
       <div className={styles.img}>
@@ -13,16 +32,16 @@ const Reset = () => {
         <div className={styles.form}>
           <h2 style={{ color: '#ff7722' }}>Reset Password</h2>
 
-          <form>
-            <input type="email" placeholder="Enter your email" required />
-            {/* <input type="password" placeholder="Enter your password" required />
+          <form onSubmit={resetPassword}>
             <input
-              type="password"
-              placeholder="Confirm your password"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
-            /> */}
+            />
 
-            <button className="--btn --btn-primary --btn-block">
+            <button type="submit" className="--btn --btn-primary --btn-block">
               Reset Password
             </button>
             <div className={styles.links}>
