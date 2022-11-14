@@ -34,7 +34,7 @@ const Header = () => {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
   const [displayName, setDisplayName] = useState('');
-
+  const [ifName, setIfName] = useState('');
   //dispatch;
   const dispatch = useDispatch();
   //show menu;
@@ -66,11 +66,16 @@ const Header = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // console.log(user);
+        if (user.displayName == null) {
+          const u1 = user.email.split('@')[0];
+          const uName = u1.charAt(0).toUpperCase() + u1.slice(1);
+          setIfName(uName);
+        }
         setDisplayName(user.displayName);
         dispatch(
           SET_ACTIVE_USER({
             email: user.email,
-            userName: user.displayName,
+            userName: user.displayName ? user.displayName : ifName,
             userId: user.uid,
           })
         );
@@ -124,7 +129,7 @@ const Header = () => {
               </NavLink>
               <a href="#">
                 <FaUserCircle size={16} />
-                Hi, {displayName}
+                Hi, {displayName ? displayName : ifName}
               </a>
               <NavLink to="/register" className={activeLink}>
                 Register
