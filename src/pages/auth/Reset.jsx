@@ -6,25 +6,30 @@ import { Link } from 'react-router-dom';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import { toast } from 'react-toastify';
+import Loader from '../../components/loader/Loader';
 const Reset = () => {
   const [email, setEmail] = useState('');
-
+  const [isLoading, setIsLoading] = useState(false);
   //reset password;
   const resetPassword = (e) => {
     e.preventDefault();
+    setIsLoading(true);
     sendPasswordResetEmail(auth, email)
       .then(() => {
+        setIsLoading(false);
         toast.success('check your email for a rest link');
       })
       .catch((error) => {
-        const errorCode = error.code;
         const errorMessage = error.message;
         toast.error(errorMessage);
+        setIsLoading(false);
         // ..
       });
   };
   return (
     <section className={`container ${styles.auth}`}>
+      {isLoading && <Loader />}
+
       <div className={styles.img}>
         <img src={restImg} alt="reset" width="400" />
       </div>
