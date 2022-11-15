@@ -11,6 +11,7 @@ import {
   SET_ACTIVE_USER,
   REMOVE_ACTIVE_USER,
 } from '../../redux/slice/authSlice';
+import HiddenLink from '../hiddenLink/HiddenLink';
 
 const logo = (
   <div className={styles.logo}>
@@ -130,10 +131,15 @@ const Header = () => {
 
           <div className={styles['header-right']} onClick={hideMenu}>
             <span className={styles.links}>
-              <NavLink to="/login" className={activeLink}>
-                Login
-              </NavLink>
-              <a href="#">
+              {displayName || ifName ? (
+                ''
+              ) : (
+                <NavLink to="/login" className={activeLink}>
+                  Login
+                </NavLink>
+              )}
+
+              <a href="#" style={{ color: '#ff7722' }}>
                 <FaUserCircle size={16} />
                 Hi, {displayName ? displayName : ifName}
               </a>
@@ -144,9 +150,11 @@ const Header = () => {
                 My Orders
               </NavLink>
 
-              <NavLink to="/order-history" onClick={logoutUser}>
-                Logout
-              </NavLink>
+              <HiddenLink>
+                <NavLink to="/order-history" onClick={logoutUser}>
+                  Logout
+                </NavLink>
+              </HiddenLink>
             </span>
             {cart}
           </div>
